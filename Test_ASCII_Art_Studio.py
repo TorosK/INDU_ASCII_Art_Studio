@@ -5,6 +5,8 @@ import numpy as np
 import unittest
 from unittest.mock import patch, MagicMock
 
+### -------------------- TESTING --------------------- ###
+
 class Test_ASCII_Art_Studio(unittest.TestCase):
     
     def test_load_nonexistent_file(self):
