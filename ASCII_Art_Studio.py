@@ -105,7 +105,7 @@ class ASCII_Art_Studio:
 # Example usage of the ASCIIArtStudio class
 def main():
     studio = ASCII_Art_Studio()
-    studio.load('path_to_image.jpg')  # Replace with actual image path
+    studio.load('slalom.jpg')  # Replace with actual image path
     studio.info()
     print(studio.render())
 
