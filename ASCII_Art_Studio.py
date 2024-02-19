@@ -60,6 +60,7 @@ class ASCII_Art_Studio:
         Parameters:
         - image: The image to adjust.
         - new_width: The desired width of the ASCII art.
+        (The new_width parameter of the _adjust_dimensions method is set to a default value of 50. This means when this method is called without specifying the new_width parameter, it uses 50 as the width for the ASCII art.)
         
         Returns:
         - A new image with adjusted dimensions.
