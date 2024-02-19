@@ -21,3 +21,7 @@ Image Loading and Processing: Pillow allows us to easily load images from files,
 Compatibility: Pillow supports a wide range of image formats, making it versatile for different types of images users might want to convert to ASCII art.
 Ease of Use: The Pillow library provides a straightforward and intuitive interface for working with images, which is ideal for a project like ASCII Art Studio that aims to be user-friendly.
 By using Pillow, ASCII Art Studio can efficiently handle the image processing tasks required to transform images into ASCII art, making it a key component of the project.
+
+# TESTING:
+
+python -m unittest Test_ASCII_Art_Studio.py
