@@ -1,10 +1,28 @@
-# C:\Users\TorosKutlu\Desktop\SU Programming Techniques\INDU_ASCII_Art_Studio\ASCII_Art_Studio.py
+# ASCII_Art_Studio.py
 
+# Import the Image class from the Python Imaging Library (PIL) package.
+# PIL, now known as Pillow, is a library that adds support for opening, manipulating,
+# and saving many different image file formats. The Image class is central to this library,
+# providing a unified interface for working with images across different formats.
+# It is used in this script to load, convert to grayscale, resize, and access pixel data
+# for the purpose of creating ASCII art representations of images.
 from PIL import Image
 
 # ASCII characters are used to create a gradient of characters from light to dark
 # which correspond to increasing levels of gray in an image.
 ASCII_CHARS = "@%#*+=-:. "
+
+# The desired width of the ASCII art.
+ASCII_ART_WIDTH_IN_CHARACTERS = 50
+# Adjusts the height to ensure that the aspect ratio is maintained in a text display.
+# For resizing the image to a specified width while maintaining the aspect ratio.
+
+# Fonts typically have characters that are taller than they are wide, hence the
+# adjustment factor of 0.55 to compensate for the display aspect ratio.
+FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO = 0.55
+
+# The maximum value for a pixel in a grayscale image.
+GRAYSCALE_MAX_VALUE = 256
 
 class ASCII_Art_Studio:
     """
@@ -67,10 +85,13 @@ class ASCII_Art_Studio:
         Returns:
         - str, a single ASCII character.
         """
-        # Map the grayscale value to one of the ASCII characters based on its intensity
-        return ASCII_CHARS[gray_value * len(ASCII_CHARS) // 256]
+        # Scale the grayscale value to an index in the ASCII_CHARS array.
+        # The GRAYSCALE_MAX_VALUE constant is used to normalize the grayscale value
+        # to the range of indexes available in ASCII_CHARS.
+        return ASCII_CHARS[gray_value * len(ASCII_CHARS) // GRAYSCALE_MAX_VALUE]
+
     
-    def _resize_image(self, new_width=50):
+    def _resize_image(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
         """
         Resize the image to a specified width while maintaining the aspect ratio.
         Adjusts the height to ensure that the aspect ratio is maintained in a text display.
@@ -85,7 +106,7 @@ class ASCII_Art_Studio:
         aspect_ratio = original_height / float(original_width)
         # Fonts typically have characters that are taller than they are wide, hence the
         # adjustment factor of 0.55 to compensate for the display aspect ratio.
-        new_height = int(aspect_ratio * new_width * 0.55)
+        new_height = int(aspect_ratio * new_width * FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO)
         # Resize and return the new image
         return self.current_image.resize((new_width, new_height))
     
@@ -108,7 +129,7 @@ class ASCII_Art_Studio:
         # Join all lines into a single string separated by newlines
         return "\n".join(ascii_art)
     
-    def render(self, new_width=50):
+    def render(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
         """
         Render the current image as ASCII art by first resizing it and then converting
         it to ASCII characters.

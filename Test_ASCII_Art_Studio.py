@@ -1,4 +1,4 @@
-# C:\Users\TorosKutlu\Desktop\SU Programming Techniques\INDU_ASCII_Art_Studio\Test_ASCII_Art_Studio.py
+# Test_ASCII_Art_Studio.py
 
 import unittest
 from ASCII_Art_Studio import ASCII_Art_Studio

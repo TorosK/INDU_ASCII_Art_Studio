@@ -1,4 +1,4 @@
-# C:\Users\TorosKutlu\Desktop\SU Programming Techniques\INDU_ASCII_Art_Studio\User_Interface.py
+# INDU_ASCII_Art_Studio\User_Interface.py
 
 from ASCII_Art_Studio import ASCII_Art_Studio
 
