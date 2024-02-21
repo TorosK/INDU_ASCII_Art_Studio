@@ -75,6 +75,7 @@ class ASCII_Art_Studio:
             return f"Filename: {self.filename}\nSize: {self.current_image.size}"
         return "No image loaded"
     
+    '''
     def _get_ascii_char(self, gray_value):
         """
         Determine which ASCII character to use based on the grayscale value.
@@ -89,8 +90,13 @@ class ASCII_Art_Studio:
         # The GRAYSCALE_MAX_VALUE constant is used to normalize the grayscale value
         # to the range of indexes available in ASCII_CHARS.
         return ASCII_CHARS[gray_value * len(ASCII_CHARS) // GRAYSCALE_MAX_VALUE]
-
+    '''
     
+    def _get_ascii_char(self, gray_value):
+        index = int(gray_value / GRAYSCALE_MAX_VALUE * (len(ASCII_CHARS) - 1))
+        return ASCII_CHARS[index]
+
+    '''
     def _resize_image(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
         """
         Resize the image to a specified width while maintaining the aspect ratio.
@@ -102,14 +108,21 @@ class ASCII_Art_Studio:
         Returns:
         - Image, a new PIL Image object with the adjusted dimensions.
         """
-        (original_width, original_height) = self.current_image.size
-        aspect_ratio = original_height / float(original_width)
-        # Fonts typically have characters that are taller than they are wide, hence the
-        # adjustment factor of 0.55 to compensate for the display aspect ratio.
-        new_height = int(aspect_ratio * new_width * FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO)
+        original_width, original_height = self.current_image.size
+        aspect_ratio = original_height / original_width
+        # Adjust height to maintain aspect ratio considering the display aspect ratio
+        new_height = int(new_width * aspect_ratio * FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO)
         # Resize and return the new image
         return self.current_image.resize((new_width, new_height))
-    
+    '''
+
+    def _resize_image(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
+        original_width, original_height = self.current_image.size
+        aspect_ratio = original_height / original_width
+        new_height = int(new_width * aspect_ratio * FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO)
+        return self.current_image.resize((new_width, new_height))
+
+    '''
     def _convert_to_ascii(self, image):
         """
         Convert the image to ASCII art by mapping each pixel's grayscale value to an ASCII character.
@@ -128,6 +141,15 @@ class ASCII_Art_Studio:
             ascii_art.append("".join(line))
         # Join all lines into a single string separated by newlines
         return "\n".join(ascii_art)
+        '''
+    
+    def _convert_to_ascii(self, image):
+        ascii_art = []
+        for y in range(image.height):
+            line = [self._get_ascii_char(image.getpixel((x, y))) for x in range(image.width)]
+            ascii_art.append("".join(line) + '\n')  # Ensure each line ends with '\n'
+        return ''.join(ascii_art)
+
     
     def render(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
         """
