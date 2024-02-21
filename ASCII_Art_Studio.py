@@ -57,18 +57,15 @@ class ASCII_Art_Studio:
         # for conversion to ASCII art. Grayscale simplifies the image to a single brightness value per pixel.
         try:
             with Image.open(filename) as img:
-                # Convert the image to grayscale, which is needed for ASCII conversion
                 self.current_image = img.convert('L')
                 self.filename = filename
                 return "Image loaded successfully."
         except FileNotFoundError:
             return "The specified file was not found."
-        except IOError:
-            # IOError is raised for problems like file not accessible, file is a directory,
-            # or file has an incorrect format (not an image).
-            return f"An IOError occurred: {e.strerror}. The file may not be accessible or may have an incorrect format."
+        except IOError as e:
+            error_message = e.strerror if e.strerror else "The file may not be accessible or may have an incorrect format."
+            return f"An IOError occurred: {error_message}."
         except Exception as e:
-            # Catch-all for any other exceptions that may occur
             return f"An unexpected error occurred: {e}. Please check the file format and your access permissions."
     
     def info(self):

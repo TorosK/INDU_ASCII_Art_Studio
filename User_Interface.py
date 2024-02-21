@@ -39,8 +39,9 @@ class User_Interface:
             filename = args[0]  # First argument is assumed to be the filename
             print(self.art_studio.load(filename))  # Load the image and print the result
         else:
-            print("No filename provided. Usage: load <filename>")
-    
+            # Make sure this message matches exactly with the expected message in the test case
+            print("No filename provided. Please use the command as: load <filename>")
+
     def render_command(self, args):
         """
         Handles the 'render' command to convert the currently loaded image into ASCII art.
