@@ -5,22 +5,21 @@ from ASCII_Art_Studio import ASCII_Art_Studio
 class User_Interface:
     """
     A class dedicated to handling user interactions with the ASCII Art Studio application.
-    It provides a command-line interface for users to execute various commands like loading images,
-    rendering them as ASCII art, displaying image information, and quitting the application.
+    Provides a command-line interface for users to execute commands such as loading images,
+    rendering ASCII art, displaying image info, and quitting the application.
     """
 
     def __init__(self, art_studio):
         """
         Initialize the User_Interface with a reference to an ASCII_Art_Studio instance.
-        
+
         Parameters:
-        - art_studio: An instance of the ASCII_Art_Studio class to interact with.
+        - art_studio: An instance of ASCII_Art_Studio class for performing image to ASCII art conversions.
         """
-        self.art_studio = art_studio  # Reference to the art studio for command execution
+        self.art_studio = art_studio  # Reference to the ASCII Art Studio for processing images
+        self.running = True  # Flag to control the main command loop
 
-        self.running = True  # Add a running flag
-
-        # Mapping of command strings to their respective methods for easy lookup and execution
+        # Commands dictionary maps command text to their handling methods for efficient command processing
         self.commands = {
             'load': self.load_command,
             'render': self.render_command,
@@ -31,104 +30,92 @@ class User_Interface:
     
     def load_command(self, args):
         """
-        Executes the 'load' command which loads an image file into the ASCII Art Studio.
-        
+        Handles the 'load' command to load an image file into the ASCII Art Studio.
+
         Parameters:
-        - args: A list of command arguments where the first element is expected to be the filename.
+        - args: List of command arguments, expects the first element to be the filename.
         """
         if args:
-            filename = args[0]  # Extract the filename from command arguments
-            print(self.art_studio.load(filename))
+            filename = args[0]  # First argument is assumed to be the filename
+            print(self.art_studio.load(filename))  # Load the image and print the result
         else:
-            # Inform the user about the correct usage if no filename is provided
-            print("No filename provided. Please use the command as: load <filename>")
+            print("No filename provided. Usage: load <filename>")
     
     def render_command(self, args):
         """
-        Executes the 'render' command to convert the currently loaded image into ASCII art.
-        
+        Handles the 'render' command to convert the currently loaded image into ASCII art.
+
         Parameters:
-        - args: A list of command arguments where the first (optional) element can be the desired width.
+        - args: List of command arguments, the first (optional) element can specify a custom width.
         """
-        # Check if a custom width is provided, otherwise use the default width of 50 characters
-        new_width = int(args[0]) if args else 50
-        print(self.art_studio.render(new_width=new_width))
+        new_width = int(args[0]) if args else 50  # Default width is 50 characters if not specified
+        print(self.art_studio.render(new_width=new_width))  # Render and print the ASCII art
 
     def info_command(self, args):
         """
-        Executes the 'info' command to display information about the currently loaded image.
-        
+        Handles the 'info' command to display information about the currently loaded image.
+
         Parameters:
-        - args: A list of command arguments, not used in this method.
+        - args: List of command arguments, not used in this method.
         """
-        print(self.art_studio.info())
+        print(self.art_studio.info())  # Print information about the current image
 
     def help_command(self, args):
         """
-        Executes the 'help' command to display a list of available commands to the user.
-        
+        Handles the 'help' command to display a list of available commands.
+
         Parameters:
-        - args: A list of command arguments, not used in this method.
+        - args: List of command arguments, not used in this method.
         """
-        self.display_help()
+        self.display_help()  # Display the help text with available commands
 
     def quit_command(self, args):
         """
-        Executes the 'quit' command to exit the ASCII Art Studio application.
-        
-        Parameters:
-        - args: A list of command arguments, not used in this method.
-        """
-        print("Bye!")
-        
-        self.running = False  # Set the flag to False instead of calling exit
+        Handles the 'quit' command to exit the ASCII Art Studio application.
 
-        #exit(0)  # Terminate the program
+        Parameters:
+        - args: List of command arguments, not used in this method.
+        """
+        print("Exiting ASCII Art Studio. Goodbye!")        
+        self.running = False  # Update the running flag to stop the command loop
 
     def display_help(self):
-        """Displays a list of available commands and their descriptions to the user."""
-        print("List of available commands:")
-        print("  load <filename> - Load an image file as the current image.")
-        print("  render [<width>] - Render the current image as ASCII art with optional width.")
-        print("  info - Display information about the current image.")
-        print("  quit - Exit the ASCII Art Studio.")
-        print("  help - Show this list of available commands.")
+        """Displays a list of available commands and their usage to the user."""
+        help_text = """
+        Available commands:
+          load <filename>   : Load an image file into the studio.
+          render [<width>]  : Render the loaded image as ASCII art with an optional width.
+          info              : Display information about the current image.
+          help              : Show this help message.
+          quit              : Exit the ASCII Art Studio.
+        """
+        print(help_text.strip())
 
     def run(self):
         """
-        Starts the command loop for the user interface, continuously accepting commands
-        until the 'quit' command is issued.
+        Starts the command loop for the user interface, accepting and processing commands until 'quit'.
         """
-        print("Welcome to ASCII Art Studio!\n")
-        self.display_help()
-        
-        #while True:
-        while self.running:  # Use the flag to control the loop
+        print("Welcome to ASCII Art Studio!\nType 'help' for a list of commands.")
+        while self.running:
             try:
-                # Split the user input into command and arguments for processing
-                command_input = input("AAS: ").strip().split()
-                command = command_input[0].lower()  # Command is case-insensitive
-                args = command_input[1:]  # Any elements after the command are arguments
-                
-                # Execute the corresponding command method if the command is recognized
+                command_input = input("AAS> ").strip().split()
+                command = command_input[0].lower()  # Convert command to lowercase for case-insensitive comparison
+                args = command_input[1:]  # Separate the command from its arguments
+
                 if command in self.commands:
-                    self.commands[command](args)
+                    self.commands[command](args)  # Execute the command if recognized
                 else:
-                    print("Unknown command. Type 'help' for a list of available commands.")
+                    print("Unknown command. Type 'help' for a list of commands.")
             except KeyError:
-                # Handle cases where the command format is incorrect
-                print("Invalid command format. Type 'help' for a list of available commands.")
+                print("Invalid command format. Type 'help' for command usage.")
             except ValueError as ve:
-                # Handle value errors, such as invalid integers for width
-                print(f"Value Error: {ve}")
+                print(f"Value Error: {ve}. Check command arguments.")
             except IOError as io:
-                # Handle IO errors, which may occur when accessing files
-                print(f"IO Error: {io}")
+                print(f"IO Error: {io}. Check file paths and permissions.")
             except Exception as e:
-                # Catch-all for any other unexpected errors
-                print(f"An unexpected error occurred: {e}")
-            
+                print(f"An unexpected error occurred: {e}. Please try again or check the command syntax.")
+
 if __name__ == "__main__":
-    studio = ASCII_Art_Studio()
-    ui = User_Interface(studio)
-    ui.run()
+    studio = ASCII_Art_Studio()  # Create an instance of ASCII_Art_Studio
+    ui = User_Interface(studio)  # Initialize the User_Interface with the studio instance
+    ui.run()  # Start the command loop

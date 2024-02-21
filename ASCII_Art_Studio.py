@@ -8,20 +8,21 @@
 # for the purpose of creating ASCII art representations of images.
 from PIL import Image
 
+# Define a string of ASCII characters ordered by perceived brightness, used to map pixel brightness to characters.
 # ASCII characters are used to create a gradient of characters from light to dark
 # which correspond to increasing levels of gray in an image.
 ASCII_CHARS = "@%#*+=-:. "
 
-# The desired width of the ASCII art.
+# The width for the ASCII art output. This determines how many characters wide the ASCII art will be.
 ASCII_ART_WIDTH_IN_CHARACTERS = 50
 # Adjusts the height to ensure that the aspect ratio is maintained in a text display.
 # For resizing the image to a specified width while maintaining the aspect ratio.
 
-# Fonts typically have characters that are taller than they are wide, hence the
-# adjustment factor of 0.55 to compensate for the display aspect ratio.
+# This factor adjusts for the fact that text characters are usually taller than they are wide, which can distort the image.
+# Adjusting for this helps maintain the original aspect ratio of the image in the ASCII art output.
 FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO = 0.55
 
-# The maximum value for a pixel in a grayscale image.
+# Maximum grayscale value for a pixel, used in mapping pixel brightness to ASCII characters.
 GRAYSCALE_MAX_VALUE = 256
 
 class ASCII_Art_Studio:
@@ -36,6 +37,8 @@ class ASCII_Art_Studio:
         Initialize the ASCII Art Studio without any image pre-loaded. This sets up
         the internal state for future operations such as loading and rendering.
         """
+        # Initializes the object without an image. `current_image` will hold the image being processed,
+        # while `filename` stores the name of the file for reference.
         self.current_image = None  # Stores the current image as a PIL Image object
         self.filename = ''         # Stores the filename of the current image
     
@@ -50,6 +53,8 @@ class ASCII_Art_Studio:
         Returns:
         - str, a success message or an error message if the file cannot be loaded.
         """
+        # Loads and converts an image to grayscale. This is the first step in preparing the image
+        # for conversion to ASCII art. Grayscale simplifies the image to a single brightness value per pixel.
         try:
             with Image.open(filename) as img:
                 # Convert the image to grayscale, which is needed for ASCII conversion
@@ -61,7 +66,10 @@ class ASCII_Art_Studio:
         except IOError:
             # IOError is raised for problems like file not accessible, file is a directory,
             # or file has an incorrect format (not an image).
-            return "The specified file has an incorrect format or is not accessible."
+            return f"An IOError occurred: {e.strerror}. The file may not be accessible or may have an incorrect format."
+        except Exception as e:
+            # Catch-all for any other exceptions that may occur
+            return f"An unexpected error occurred: {e}. Please check the file format and your access permissions."
     
     def info(self):
         """
@@ -75,81 +83,40 @@ class ASCII_Art_Studio:
             return f"Filename: {self.filename}\nSize: {self.current_image.size}"
         return "No image loaded"
     
-    '''
     def _get_ascii_char(self, gray_value):
-        """
-        Determine which ASCII character to use based on the grayscale value.
-        
-        Parameters:
-        - gray_value: int, a value from 0 to 255 representing the grayscale level.
-        
-        Returns:
-        - str, a single ASCII character.
-        """
-        # Scale the grayscale value to an index in the ASCII_CHARS array.
-        # The GRAYSCALE_MAX_VALUE constant is used to normalize the grayscale value
-        # to the range of indexes available in ASCII_CHARS.
-        return ASCII_CHARS[gray_value * len(ASCII_CHARS) // GRAYSCALE_MAX_VALUE]
-    '''
-    
-    def _get_ascii_char(self, gray_value):
+        # Maps a grayscale value to an ASCII character from the defined `ASCII_CHARS` string.
+        # The mapping is based on the relative brightness of the grayscale value.
         index = int(gray_value / GRAYSCALE_MAX_VALUE * (len(ASCII_CHARS) - 1))
         return ASCII_CHARS[index]
 
-    '''
     def _resize_image(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
         """
-        Resize the image to a specified width while maintaining the aspect ratio.
-        Adjusts the height to ensure that the aspect ratio is maintained in a text display.
-        
-        Parameters:
-        - new_width: int, the desired width of the ASCII art.
-        
-        Returns:
-        - Image, a new PIL Image object with the adjusted dimensions.
-        """
-        original_width, original_height = self.current_image.size
-        aspect_ratio = original_height / original_width
-        # Adjust height to maintain aspect ratio considering the display aspect ratio
-        new_height = int(new_width * aspect_ratio * FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO)
-        # Resize and return the new image
-        return self.current_image.resize((new_width, new_height))
-    '''
+        Resizes the image to a specified width while maintaining the original aspect ratio.
+        This is important for ensuring the ASCII art representation looks correct and not stretched.
 
-    def _resize_image(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
+        The new height is calculated based on the original aspect ratio (original height divided by original width)
+        and adjusted by a factor to account for the typical character display aspect ratio, as characters
+        are often taller than they are wide.
+
+        Parameters:
+        - new_width: int, the desired width for the ASCII art representation.
+
+        Returns:
+        - Image: a PIL Image object that has been resized to the new dimensions.
+        """
         original_width, original_height = self.current_image.size
         aspect_ratio = original_height / original_width
         new_height = int(new_width * aspect_ratio * FONT_ADJUSTMENT_FACTOR_FOR_DISPLAY_ASPECT_RATIO)
         return self.current_image.resize((new_width, new_height))
-
-    '''
-    def _convert_to_ascii(self, image):
-        """
-        Convert the image to ASCII art by mapping each pixel's grayscale value to an ASCII character.
-        
-        Parameters:
-        - image: Image, the PIL Image object to be converted.
-        
-        Returns:
-        - str, the ASCII art representation of the image as a string.
-        """
-        ascii_art = []
-        for y in range(image.height):
-            # Generate a line of ASCII characters for each row of pixels
-            line = [self._get_ascii_char(image.getpixel((x, y)))
-                    for x in range(image.width)]
-            ascii_art.append("".join(line))
-        # Join all lines into a single string separated by newlines
-        return "\n".join(ascii_art)
-        '''
     
     def _convert_to_ascii(self, image):
+        # Converts the resized grayscale image to ASCII art, line by line, by mapping each pixel's
+        # brightness to an ASCII character.
         ascii_art = []
         for y in range(image.height):
             line = [self._get_ascii_char(image.getpixel((x, y))) for x in range(image.width)]
-            ascii_art.append("".join(line) + '\n')  # Ensure each line ends with '\n'
+            ascii_art.append("".join(line) + '\n')  # Ensure each line is terminated with a newline character '\n'
         return ''.join(ascii_art)
-
     
     def render(self, new_width=ASCII_ART_WIDTH_IN_CHARACTERS):
         """
