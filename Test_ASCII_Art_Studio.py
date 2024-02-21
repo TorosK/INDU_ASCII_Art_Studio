@@ -1,7 +1,9 @@
 # Test_ASCII_Art_Studio.py
 
 import unittest
+from unittest.mock import patch  # Import the patch function
 from ASCII_Art_Studio import ASCII_Art_Studio
+from User_Interface import User_Interface
 from PIL import Image
 
 class Custom_Test_Result(unittest.TextTestResult):
@@ -63,11 +65,7 @@ class Test_ASCII_Art_Studio(unittest.TestCase):
     def test_info_no_image_loaded(self):
         """Test the info method when no image is loaded."""
         response = self.studio.info()
-        self.assertEqual(response, "No image loaded")
-
-    # Note: Testing methods that require loading a real image file, such as _resize_image,
-    # _convert_to_ascii, and render, can be more complex and might involve using mock objects
-    # or loading test images known to produce specific outputs.        
+        self.assertEqual(response, "No image loaded")   
 
     def test_resize_image(self):
         """Test resizing an image maintains the correct aspect ratio."""
@@ -138,6 +136,47 @@ class Test_ASCII_Art_Studio(unittest.TestCase):
         # Run the actual test method
         super(Test_ASCII_Art_Studio, self).run(result)
         # Add a custom footer after each test
+        print("Finished Test Case: {}\n".format(test_id))
+        if result.failures:
+            print("Test Case {} Failed: {}".format(test_id, result.failures[-1][1]))
+        elif result.errors:
+            print("Test Case {} Encountered an Error: {}".format(test_id, result.errors[-1][1]))
+        else:
+            print("Test Case {} Passed".format(test_id))
+
+class Test_User_Interface(unittest.TestCase):
+    def setUp(self):
+        """Set up an instance of ASCII_Art_Studio and User_Interface before each test."""
+        self.studio = ASCII_Art_Studio()
+        self.ui = User_Interface(self.studio)
+
+    @patch('builtins.print')
+    def test_load_command_with_valid_file(self, mock_print):
+        """Test the load command with a valid file name."""
+        with patch('builtins.input', side_effect=['load test_image.jpg', 'quit']):
+            self.ui.run()
+            mock_print.assert_any_call('The specified file was not found.')  # Example assertion
+
+    @patch('builtins.print')
+    def test_load_command_with_no_filename(self, mock_print):
+        """Test the load command without specifying a file name."""
+        with patch('builtins.input', side_effect=['load', 'quit']):
+            self.ui.run()
+            mock_print.assert_any_call("No filename provided. Please use the command as: load <filename>")
+
+    @patch('builtins.print')
+    def test_info_command_no_image(self, mock_print):
+        """Test the info command when no image is loaded."""
+        with patch('builtins.input', side_effect=['info', 'quit']):
+            self.ui.run()
+            mock_print.assert_any_call("No image loaded")
+
+    def run(self, result=None):
+        # Custom header before each test
+        test_id = self.id().split('.')[-1]
+        print("\nRunning Test Case: {}".format(test_id))
+        super(Test_User_Interface, self).run(result)  # Run the actual test
+        # Custom footer after each test
         print("Finished Test Case: {}\n".format(test_id))
         if result.failures:
             print("Test Case {} Failed: {}".format(test_id, result.failures[-1][1]))

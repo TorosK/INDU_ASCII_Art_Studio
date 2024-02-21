@@ -17,6 +17,9 @@ class User_Interface:
         - art_studio: An instance of the ASCII_Art_Studio class to interact with.
         """
         self.art_studio = art_studio  # Reference to the art studio for command execution
+
+        self.running = True  # Add a running flag
+
         # Mapping of command strings to their respective methods for easy lookup and execution
         self.commands = {
             'load': self.load_command,
@@ -77,7 +80,10 @@ class User_Interface:
         - args: A list of command arguments, not used in this method.
         """
         print("Bye!")
-        exit(0)  # Terminate the program
+        
+        self.running = False  # Set the flag to False instead of calling exit
+
+        #exit(0)  # Terminate the program
 
     def display_help(self):
         """Displays a list of available commands and their descriptions to the user."""
@@ -96,7 +102,8 @@ class User_Interface:
         print("Welcome to ASCII Art Studio!\n")
         self.display_help()
         
-        while True:
+        #while True:
+        while self.running:  # Use the flag to control the loop
             try:
                 # Split the user input into command and arguments for processing
                 command_input = input("AAS: ").strip().split()
