@@ -1,4 +1,4 @@
-# INDU_ASCII_Art_Studio\User_Interface.py
+# User_Interface.py
 
 from ASCII_Art_Studio import ASCII_Art_Studio
 
